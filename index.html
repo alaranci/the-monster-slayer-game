@@ -35,12 +35,18 @@
           ></div>
         </div>
       </section>
-      <section id="controls">
+      <section class="container" v-if="winner">
+        <h2>Game Over!</h2>
+        <h3 v-if="winner === 'monster'">You lost!</h3>
+        <h3 v-else-if="winner === 'player'">You won!</h3>
+        <h3 v-else>It's a draw!</h3>
+      </section>
+      <section id="controls" v-if="!winner">
         <button @click="playerAttack">ATTACK</button>
         <button :disabled="attackLaunch % 3 !== 0" @click="playerSpecialAttack">
           SPECIAL ATTACK
         </button>
-        <button>HEAL</button>
+        <button @click="heal">HEAL</button>
         <button>SURRENDER</button>
       </section>
       <section id="log" class="container">
