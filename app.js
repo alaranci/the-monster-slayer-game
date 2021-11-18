@@ -6,6 +6,7 @@ const app = Vue.createApp({
       monsterHealth: 100,
       attackLaunch: 0,
       winner: null,
+      logMessages: [],
     };
   },
 
@@ -26,21 +27,46 @@ const app = Vue.createApp({
     },
   },
 
+  computed: {
+    playerHealthBar() {
+      if (this.playerHealth < 0) {
+        return { width: "0%" };
+      }
+      return { width: this.playerHealth + "%" };
+    },
+    monsterHealthBar() {
+      if (this.monsterHealth < 0) {
+        return { width: "0%" };
+      }
+      return { width: this.monsterHealth + "%" };
+    },
+  },
+
   methods: {
+    startNewGame() {
+      this.playerHealth = 100;
+      this.monsterHealth = 100;
+      this.attackLaunch = 0;
+      this.winner = null;
+      this.logMessages = [];
+    },
     playerAttack() {
       this.attackLaunch++;
-      const fiery = Math.floor(Math.random() * (12 - 5)) + 5;
-      this.monsterHealth -= fiery;
+      const attackValue = Math.floor(Math.random() * (12 - 5)) + 5;
+      this.monsterHealth -= attackValue;
+      this.addLogMessage("player", "attack", attackValue);
       this.monsterAttack();
     },
     monsterAttack() {
-      const fiery = Math.floor(Math.random() * (15 - 8)) + 8;
-      this.playerHealth -= fiery;
+      const attackValue = Math.floor(Math.random() * (15 - 8)) + 8;
+      this.playerHealth -= attackValue;
+      this.addLogMessage("monster", "attack", attackValue);
     },
     playerSpecialAttack() {
       this.attackLaunch++;
-      const fiery = Math.floor(Math.random() * (25 - 10)) + 10;
-      this.monsterHealth -= fiery;
+      const attackValue = Math.floor(Math.random() * (25 - 10)) + 10;
+      this.monsterHealth -= attackValue;
+      this.addLogMessage("player", "special attack", attackValue);
       this.monsterAttack();
     },
     heal() {
@@ -51,9 +77,20 @@ const app = Vue.createApp({
       } else {
         this.playerHealth += healValue;
       }
+      this.addLogMessage("player", "heal", healValue);
       this.monsterAttack();
     },
-    surrender() {},
+    surrender() {
+      this.winner = "monster";
+    },
+
+    addLogMessage(who, what, value) {
+      this.logMessages.unshift({
+        who: who,
+        what: what,
+        value: value,
+      });
+    },
   },
 });
 
